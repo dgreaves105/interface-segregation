@@ -1,6 +1,8 @@
 using System.Reflection;
-using Application;
+using System.Text.Json.Serialization;
+using Application.Abstractions;
 using Application.Queries;
+using Infrastructure;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -26,6 +28,14 @@ namespace API
             services.AddControllers();
 
             services.AddMediatR(Assembly.GetAssembly(typeof(GetForecast)));
+
+            services.AddScoped<IWeatherService, WeatherService>();
+            services.AddScoped<IWeatherProvider, WeatherProvider>();
+
+            services.AddMvc().AddJsonOptions(o =>
+                {
+                    o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                });
 
             services.AddSwaggerGen(c =>
             {
